@@ -1,7 +1,5 @@
 package Main_and_Drawing.Layouts;
 
-import Main_and_Drawing.Layout;
-
 import java.awt.*;
 
 public class RectP implements LayoutParameters{
