@@ -18,7 +18,7 @@ public class Game {
         Screen screen = new Screen(800, 800);
         int xPos = 10;
         int yPos = 10;
-        Character genevieve  = new Character("Assets/Visuals/Characters/Genevieve/Genevieve1.0.png", screen);
+        Character genevieve  = new Character("Assets/Visuals/Characters/Genevieve/Genevieve1.0.png", screen, xPos,yPos);
 
         MyKeyListener keyListener = new MyKeyListener();
         screen.addKeyListener(keyListener);
@@ -31,37 +31,45 @@ public class Game {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+            updateCharacter(keyListener, genevieve);
             screen.update_screen();
-            checker(keyListener);
-
-
-
         }
 
     }
+    private static final double SPEED = 18.0;
 
-    public static int[] checker(MyKeyListener keyListener){
-
+    public static void updateCharacter(MyKeyListener keyListener, Character character){
+        double vx = 0.0;
+        double vy = 0.0;
 
         float speedDiagonal = 0.72f;
         if (keyListener.isKeyPressed(key_up)) {
             // Move the character up
-            yPos += 10;
+            vy -= SPEED;
         }
 
         if (keyListener.isKeyPressed(key_down)) {
             // Move the character down
-            yPos -= 10;
+            vy += SPEED;
         }
 
         if (keyListener.isKeyPressed(key_left)) {
             // Move the character left
-            xPos -= 10;
+            vx -= SPEED;
         }
 
         if (keyListener.isKeyPressed(key_right)) {
             // Move the character right
-            xPos += 10;
+            vx += SPEED;
         }
+
+        if (vx != 0.0 && vy != 0.0) {
+            double magnitude = Math.sqrt(vx * vx + vy * vy);
+            vx /= magnitude;
+            vy /= magnitude;
+            vx *= SPEED;
+            vy *= SPEED;
+        }
+        character.move(vx, vy);
     }
 }
