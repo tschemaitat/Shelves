@@ -30,20 +30,20 @@ public abstract class Twod {
 	public void setX(int x) {
 		RectP rect = (RectP)layoutParameters;
 		rect.setX(x);
-		update();
+		update(parent);
 	}
 	public void setY(int y) {
 		RectP rect = (RectP)layoutParameters;
 		rect.setY(y);
-		update();
+		update(parent);
 	}
 	public void setHeight(int height) {
 		layoutParameters.setHeight(height);
-		update();
+		update(parent);
 	}
 	public void setWidth(int width) {
 		layoutParameters.setWidth(width);
-		update();
+		update(parent);
 	}
 	//endregion
 	
@@ -59,7 +59,7 @@ public abstract class Twod {
 	LayoutParameters layoutParameters;
 	public Polygon bounds;
 	
-	public Layout parent;
+	private Layout parent;
 	
 	
 	public Twod(LayoutParameters parameters, Layout parent){
@@ -68,7 +68,6 @@ public abstract class Twod {
 			parent.add(this);
 		}
 		layoutParameters = parameters;
-		update();
 	}
 	
 	
@@ -76,8 +75,14 @@ public abstract class Twod {
 	
 	//public List<Twod> getChildren();
 	
-	public Twod getParent() {
+	public Layout getParent() {
 		return parent;
+	}
+	
+	public void setParent(Layout parent){
+		this.parent = parent;
+		if(parent != null)
+			update(parent);
 	}
 	
 	public void setVisibility(int num){
@@ -106,30 +111,30 @@ public abstract class Twod {
 		return bounds.contains(x, y);
 	}
 	
-	public boolean observe(MouseEvent_Edited event){
+	public Twod observe(MouseEvent_Edited event){
 		
 		//System.out.println("observing for twod: " + name);
 		//System.out.println("event is: "+event.x()+","+event.y()+" twod is at: " + getX() + ", " + getY() + " width/height: " + width+", " + height);
 		if(UIvisibility == 0)
-			return false;
+			return null;
 		int x = event.x();
 		int y = event.y();
 		if(inBounds(event.x(), event.y())){
 			//System.out.println("it is in bounds");
 			//System.out.println("got clicked");
-			event.observer = this;
-			return true;
+			//System.out.println("twod: in bounds");
+			return this;
 		}
-		return false;
+		return null;
 	}
 	
 	public abstract void draw(Graphics2D grf);
 	
-	public void update(){
-		x = layoutParameters.getX();
-		y = layoutParameters.getY();
-		width = layoutParameters.getWidth();
-		height = layoutParameters.getHeight();
+	public void update(Layout parent){
+		x = layoutParameters.getX(this, parent);
+		y = layoutParameters.getY(this, parent);
+		width = layoutParameters.getWidth(this, parent);
+		height = layoutParameters.getHeight(this, parent);
 		setBounds();
 	}
 	
@@ -154,6 +159,14 @@ public abstract class Twod {
 		this.layoutParameters = layoutParameters;
 	}
 	
-	public abstract void onMouseEvent(MouseEvent_Edited event);
+	public void onMouseEvent(MouseEvent_Edited event){
+		//System.out.println("reached two onmouseevnet");
+		if(mouseFunction != null)
+			mouseFunction.onMouseEvent(event);
+	}
 	
+	MouseFunction mouseFunction = null;
+	public void setMouseEventListener(MouseFunction mouseFunction){
+		this.mouseFunction = mouseFunction;
+	}
 }

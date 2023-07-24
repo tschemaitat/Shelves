@@ -12,14 +12,13 @@ public class MouseEvent_Edited {
 	int x;
 	int y;
 	private MouseEvent event;
-	Twod observer;
 	public int type;
 	public MouseEvent_Edited(MouseEvent e, int type){
 		event = e;
 		this.type = type;
 	}
 	
-	public String type(){
+	public String type_string(){
 		if(type == type_click)
 			return "type_click";
 		if(type == type_pressed)
@@ -32,6 +31,11 @@ public class MouseEvent_Edited {
 			return "type_untouch";
 		return null;
 	}
+	
+	public int type(){
+		return type;
+	}
+	
 	
 	public MouseEvent_Edited(int x, int y, int type){
 		this.x = x;
@@ -57,6 +61,13 @@ public class MouseEvent_Edited {
 	public int getYOnScreen(){
 		return event.getYOnScreen();
 	}
+	
+	public MouseEvent_Edited set_layout(Layout layout){
+		MouseEvent_Edited result = new MouseEvent_Edited(x(), y(), type);
+		return result;
+	}
+	
+	
 	
 	
 }
