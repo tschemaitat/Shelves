@@ -41,24 +41,6 @@ public class Image_Twod extends Twod {
             drawable.draw(grf, this);
     }
     
-    public void onMouseEvent(MouseEvent_Edited event){
-        if(onClick == null)
-            return;
-        onClick.execute();
-    }
-    
-    public void onTouched(MouseEvent_Edited event){
-    
-    }
-    
-    public void onMouseDown(MouseEvent_Edited event){
-    
-    }
-    
-    public void onMouseUp(MouseEvent_Edited event){
-    
-    }
-    
     public String toString(){
         String result = "";
         result += "name: " + name + " x: " + x + " y: " + y + " layout: ";

@@ -20,6 +20,7 @@ public class Screen extends JPanel implements KeyListener {
     Command external_drawer;
     Graphics current_graphics = null;
     Mouse mouse;
+    boolean actively_observing_mouse_events = true;
     public Point mouse_point;
     public Screen(int width, int height){
         mouse_events = new ArrayList<>();
@@ -38,7 +39,8 @@ public class Screen extends JPanel implements KeyListener {
         //frame.repaint
 
         stack = new Stack_Layout(0, 0, width, height);
-    
+        stack.screen_parent = this;
+        stack.update();
         mouse = new Mouse();
         this.addMouseListener(mouse);
 
@@ -88,6 +90,8 @@ public class Screen extends JPanel implements KeyListener {
         }
         
         mouse_events.add(e);
+        if(actively_observing_mouse_events)
+            pop_mouse_event_to_observe();
         //System.out.println("did not recieve event");
     }
     
@@ -102,9 +106,10 @@ public class Screen extends JPanel implements KeyListener {
         //System.out.println("popping event to observe");
         if(mouse_events.size() != 0){
             MouseEvent_Edited event = mouse_events.remove(0);
-            boolean found = observe(event);
-            if(found){
-                event.observer.onMouseEvent(event);
+            Twod found = observe(event);
+            //System.out.println("found observer: " + found);
+            if(found != null){
+                found.onMouseEvent(event);
             }
         }
     }
@@ -118,11 +123,11 @@ public class Screen extends JPanel implements KeyListener {
         
         MouseEvent_Edited touch_event = new MouseEvent_Edited(x, y, MouseEvent_Edited.type_touch);
         MouseEvent_Edited untouch_event = new MouseEvent_Edited(x, y, MouseEvent_Edited.type_untouch);
-        boolean found = observe(touch_event);
-        if(found){
+        Twod twod = observe(touch_event);
+        if(twod != null){
             //System.out.println("found observer: " + touch_event.observer.name + "point: "+mouse_point + "event: " + touch_event.x() + ", " + touch_event.y());
             if(mouse_touching_this != null){
-                if(mouse_touching_this != touch_event.observer){
+                if(mouse_touching_this != twod){
                     mouse_touching_this.mouse_touching = false;
                     //System.out.println("sending untouch: " + untouch_event.type());
                     mouse_touching_this.onMouseEvent(untouch_event);
@@ -130,10 +135,10 @@ public class Screen extends JPanel implements KeyListener {
                 }
             }
             //System.out.println("observed touch");
-            if(touch_event.observer.mouse_touching == false){
-                mouse_touching_this = touch_event.observer;
-                touch_event.observer.mouse_touching = true;
-                touch_event.observer.onMouseEvent(touch_event);
+            if(twod.mouse_touching == false){
+                mouse_touching_this = twod;
+                twod.mouse_touching = true;
+                twod.onMouseEvent(touch_event);
             }
             
             return;
@@ -159,7 +164,7 @@ public class Screen extends JPanel implements KeyListener {
         
     }
     
-    private boolean observe(MouseEvent_Edited event){
+    private Twod observe(MouseEvent_Edited event){
         return stack.observe(event);
     }
     

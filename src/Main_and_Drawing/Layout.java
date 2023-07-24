@@ -8,19 +8,29 @@ import java.util.List;
 
 public abstract class Layout extends Twod {
 	List<Twod> list = new ArrayList<>();
-	Object parent;
+	Screen screen_parent;
 	public String name = null;
 	
 	public Layout(LayoutParameters parameters, Layout parent) {
 		super(parameters, parent);
 	}
 	
+	
+	
 	public void update() {
-		super.update();
+		if(screen_parent != null){
+			x = 0;
+			y = 0;
+			width = layoutParameters.getWidth(this, this);
+			height = layoutParameters.getHeight(this, this);
+		}else{
+			super.update(getParent());
+		}
+		
 		if(list == null)
 			return;
 		for(int i = 0; i < list.size(); i++){
-			list.get(i).update();
+			list.get(i).update(this);
 		}
 	}
 	
@@ -62,23 +72,12 @@ public abstract class Layout extends Twod {
 	
 	
 	
-	protected void update_parent(){
-		if(parent == null)
-			return;
-		if(parent instanceof Screen){
-			Screen screen = (Screen)parent;
-			screen.update_screen();
-		}else{
-			Layout parent_layout = (Layout) parent;
-			parent_layout.update_parent();
-		}
-	}
 	
-	public abstract boolean observe(MouseEvent_Edited event);
+	public abstract Twod observe(MouseEvent_Edited event);
 	
 	public void draw(Graphics2D grf){
 		for(int i = 0; i < list.size(); i++){
-			list.get(i).update();
+			list.get(i).update(this);
 			//list.get(i).drawBounds(grf);
 		}
 		draw_custom(grf);
@@ -93,7 +92,7 @@ public abstract class Layout extends Twod {
 		}
 		
 		list.add(twod);
-		twod.parent = this;
+		twod.setParent(this);
 		add_custom(twod);
 	}
 	
@@ -109,7 +108,7 @@ public abstract class Layout extends Twod {
 	
 	public final void remove(Twod twod){
 		list.remove(twod);
-		twod.parent = null;
+		twod.setParent(null);
 		remove_custom(twod);
 		//System.out.println("removing twod from layout");
 		//update_parent();
