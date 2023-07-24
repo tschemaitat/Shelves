@@ -1,5 +1,8 @@
 package Main_and_Drawing.Layouts;
 
+import Main_and_Drawing.Layout;
+import Main_and_Drawing.Twod;
+
 import java.awt.*;
 
 public class RectP implements LayoutParameters{
@@ -17,13 +20,14 @@ public class RectP implements LayoutParameters{
 	}
 	
 	@Override
-	public int getWidth() {
+	public int getWidth(Twod twod, Layout layout) {
 		return width;
 	}
 	
 	@Override
-	public int getHeight() {
+	public int getHeight(Twod twod, Layout layout) {
 		return height;
+		//hello
 	}
 	
 	@Override
@@ -45,7 +49,7 @@ public class RectP implements LayoutParameters{
 	
 	//region Simple get and sets
 	@Override
-	public int getX() {
+	public int getX(Twod twod, Layout layout) {
 		return x;
 	}
 	
@@ -53,7 +57,7 @@ public class RectP implements LayoutParameters{
 		this.x = x;
 	}
 	@Override
-	public int getY() {
+	public int getY(Twod twod, Layout layout) {
 		return y;
 	}
 	
