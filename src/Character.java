@@ -6,6 +6,7 @@ import Main_and_Drawing.Twod;
 
 public class Character {
     private int x; // Character's current x-coordinate
+    //HEY
     private int y; // Character's current y-coordinate
     private Twod twod;
     // Constructor to set the initial position of the character
